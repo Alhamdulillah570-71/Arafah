@@ -1,0 +1,1132 @@
+<!DOCTYPE html>
+<html lang="ckb" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#0a0d1a">
+<meta name="description" content="کۆمەڵە دوعای ڕۆژی عەرەفە — باشترین دوعا، دوعای ڕۆژی عەرەفەیە">
+
+<!-- PWA -->
+<link rel="manifest" href="manifest.json">
+<meta name="mobile-web-app-capable" content="yes">
+
+<!-- iOS PWA -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="عەرەفە">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+
+<!-- Fallback icon -->
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
+
+<title>دوعای ڕۆژی عەرەفە</title>
+
+<!-- Fonts: Amiri for Arabic dua text (calligraphic Naskh), Aref Ruqaa Ink for display, Vazirmatn for Kurdish UI -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Aref+Ruqaa+Ink:wght@400;700&family=Vazirmatn:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+/* ======================================================
+   ROOT & THEME
+====================================================== */
+:root{
+  /* font scale (controlled by settings) */
+  --scale: 1;
+
+  /* palette — midnight + warm gold */
+  --bg-deep:        #07090f;
+  --bg:             #0a0d1a;
+  --bg-soft:        #11142a;
+  --surface:        #161a33;
+  --surface-2:      #1c2142;
+  --hairline:       rgba(212,175,55,0.18);
+  --hairline-strong:rgba(212,175,55,0.34);
+
+  --gold:           #d4af37;
+  --gold-light:     #f3e3a3;
+  --gold-soft:      #b89230;
+  --gold-glow:      rgba(212,175,55,0.22);
+
+  --text:           #f3eedc;
+  --text-soft:      #d8d2bd;
+  --text-muted:     #9892a0;
+
+  --radius:         18px;
+  --radius-lg:      26px;
+  --shadow:         0 24px 60px -20px rgba(0,0,0,0.7), 0 8px 22px -8px rgba(0,0,0,0.5);
+  --shadow-gold:    0 0 0 1px rgba(212,175,55,0.18), 0 20px 50px -30px rgba(212,175,55,0.35);
+
+  --ease:           cubic-bezier(.22,.61,.36,1);
+}
+
+/* ======================================================
+   BASE
+====================================================== */
+*,*::before,*::after{box-sizing:border-box}
+html,body{margin:0;padding:0}
+html{
+  background:var(--bg-deep);
+  color:var(--text);
+  -webkit-text-size-adjust:100%;
+  scroll-behavior:smooth;
+}
+body{
+  font-family:'Vazirmatn', system-ui, sans-serif;
+  font-size:calc(16px * var(--scale));
+  line-height:1.7;
+  background:
+    radial-gradient(1200px 600px at 50% -10%, rgba(212,175,55,0.08), transparent 60%),
+    radial-gradient(900px 500px at 90% 110%, rgba(82,60,140,0.10), transparent 60%),
+    radial-gradient(700px 400px at 10% 90%, rgba(212,175,55,0.05), transparent 60%),
+    var(--bg);
+  min-height:100vh;
+  min-height:100dvh;
+  overflow-x:hidden;
+  padding-top:env(safe-area-inset-top);
+  padding-bottom:env(safe-area-inset-bottom);
+  position:relative;
+}
+
+/* subtle islamic geometric texture overlay */
+body::before{
+  content:"";
+  position:fixed; inset:0;
+  pointer-events:none;
+  background-image:
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'><g fill='none' stroke='%23d4af37' stroke-width='0.6' opacity='0.06'><path d='M40 0 L80 40 L40 80 L0 40 Z'/><path d='M40 12 L68 40 L40 68 L12 40 Z'/><circle cx='40' cy='40' r='6'/></g></svg>");
+  background-size:80px 80px;
+  opacity:.55;
+  z-index:0;
+  mix-blend-mode:overlay;
+}
+body::after{
+  content:"";
+  position:fixed; inset:-50% -50% auto auto;
+  width:90vw; height:90vw;
+  max-width:900px; max-height:900px;
+  background:radial-gradient(closest-side, rgba(212,175,55,0.10), transparent 70%);
+  pointer-events:none;
+  z-index:0;
+}
+
+main, header, footer, .fab, .sheet{position:relative; z-index:1}
+
+/* ======================================================
+   TYPOGRAPHY HELPERS
+====================================================== */
+.font-ar{font-family:'Amiri', 'Vazirmatn', serif; font-weight:400}
+.font-display{font-family:'Aref Ruqaa Ink', 'Amiri', serif; font-weight:700; letter-spacing:.5px}
+
+::selection{background:var(--gold); color:#0a0d1a}
+
+/* ======================================================
+   LAYOUT
+====================================================== */
+.wrap{
+  width:100%;
+  max-width:760px;
+  margin:0 auto;
+  padding:28px 22px 120px;
+}
+
+/* ======================================================
+   HEADER ORNAMENT
+====================================================== */
+.crown{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:14px;
+  margin:6px 0 18px;
+  opacity:.9;
+}
+.crown .line{flex:1; height:1px; max-width:120px;
+  background:linear-gradient(90deg, transparent, var(--gold) 50%, transparent);
+}
+.crown .star{
+  color:var(--gold);
+  font-size:14px;
+  filter:drop-shadow(0 0 6px var(--gold-glow));
+}
+
+/* ======================================================
+   HERO (HOME)
+====================================================== */
+.hero{
+  text-align:center;
+  padding:14px 6px 22px;
+}
+.hero .eyebrow{
+  font-size:calc(.78rem * var(--scale));
+  letter-spacing:6px;
+  color:var(--gold);
+  text-transform:uppercase;
+  font-weight:500;
+  margin-bottom:18px;
+  opacity:.85;
+}
+.hero h1{
+  font-family:'Aref Ruqaa Ink','Amiri',serif;
+  font-weight:700;
+  font-size:clamp(2.4rem, 9vw, 3.6rem);
+  margin:8px 0 12px;
+  background:linear-gradient(180deg, #fff7d6 0%, var(--gold-light) 40%, var(--gold) 100%);
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+  line-height:1.25;
+  text-shadow:0 0 60px rgba(212,175,55,0.15);
+}
+.hero .hadith{
+  font-family:'Amiri', serif;
+  font-size:calc(1.05rem * var(--scale));
+  color:var(--text-soft);
+  max-width:520px;
+  margin:18px auto 8px;
+  line-height:1.95;
+  font-style:italic;
+}
+.hero .hadith small{
+  display:block;
+  margin-top:10px;
+  color:var(--gold-light);
+  font-style:normal;
+  font-size:.78em;
+  font-family:'Vazirmatn',sans-serif;
+  letter-spacing:1px;
+}
+
+/* ======================================================
+   SECTION CARDS GRID (HOME)
+====================================================== */
+.grid{
+  display:grid;
+  grid-template-columns:repeat(2, 1fr);
+  gap:14px;
+  margin-top:30px;
+}
+@media (min-width:560px){ .grid{grid-template-columns:repeat(3, 1fr); gap:16px} }
+@media (min-width:820px){ .grid{grid-template-columns:repeat(4, 1fr)} }
+
+.card{
+  position:relative;
+  background:linear-gradient(160deg, var(--surface) 0%, var(--surface-2) 100%);
+  border:1px solid var(--hairline);
+  border-radius:var(--radius);
+  padding:22px 16px 20px;
+  text-align:center;
+  cursor:pointer;
+  overflow:hidden;
+  transition:transform .35s var(--ease), border-color .3s, box-shadow .35s;
+  font-family:'Vazirmatn',sans-serif;
+  color:var(--text);
+  -webkit-tap-highlight-color:transparent;
+  isolation:isolate;
+}
+.card::before{
+  content:"";
+  position:absolute; inset:0;
+  background:radial-gradient(circle at 50% 0%, rgba(212,175,55,0.12), transparent 60%);
+  opacity:0;
+  transition:opacity .4s var(--ease);
+  z-index:-1;
+}
+.card:hover, .card:active{
+  transform:translateY(-3px);
+  border-color:var(--hairline-strong);
+  box-shadow:var(--shadow-gold);
+}
+.card:hover::before, .card:active::before{opacity:1}
+
+.card .num{
+  font-family:'Aref Ruqaa Ink', serif;
+  color:var(--gold);
+  font-size:calc(1.1rem * var(--scale));
+  margin-bottom:10px;
+  letter-spacing:1px;
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+}
+.card .num::before, .card .num::after{
+  content:"";
+  width:14px; height:1px;
+  background:var(--gold);
+  opacity:.5;
+}
+.card h3{
+  font-size:calc(1rem * var(--scale));
+  margin:6px 0 6px;
+  font-weight:600;
+  color:var(--text);
+  line-height:1.45;
+}
+.card p{
+  font-size:calc(.8rem * var(--scale));
+  color:var(--text-muted);
+  margin:0;
+  line-height:1.55;
+}
+
+/* card load animation */
+.card{ opacity:0; transform:translateY(14px); animation:cardIn .6s var(--ease) forwards }
+.card:nth-child(1){animation-delay:.05s}
+.card:nth-child(2){animation-delay:.10s}
+.card:nth-child(3){animation-delay:.15s}
+.card:nth-child(4){animation-delay:.20s}
+.card:nth-child(5){animation-delay:.25s}
+.card:nth-child(6){animation-delay:.30s}
+.card:nth-child(7){animation-delay:.35s}
+.card:nth-child(8){animation-delay:.40s}
+@keyframes cardIn{ to{ opacity:1; transform:translateY(0) } }
+
+/* ======================================================
+   SECTION VIEW
+====================================================== */
+#view-section{display:none}
+#view-section.show{display:block; animation:fadeIn .5s var(--ease)}
+@keyframes fadeIn{ from{opacity:0; transform:translateY(8px)} to{opacity:1; transform:translateY(0)} }
+
+.back{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  background:transparent;
+  border:1px solid var(--hairline);
+  color:var(--text-soft);
+  padding:9px 16px 9px 14px;
+  border-radius:999px;
+  font-family:'Vazirmatn',sans-serif;
+  font-size:calc(.88rem * var(--scale));
+  cursor:pointer;
+  transition:all .3s var(--ease);
+  -webkit-tap-highlight-color:transparent;
+}
+.back:hover{ border-color:var(--gold); color:var(--gold) }
+.back svg{ width:14px; height:14px }
+
+.section-head{
+  text-align:center;
+  padding:26px 10px 18px;
+}
+.section-head .label{
+  font-size:calc(.75rem * var(--scale));
+  letter-spacing:5px;
+  color:var(--gold);
+  text-transform:uppercase;
+  margin-bottom:10px;
+}
+.section-head h2{
+  font-family:'Aref Ruqaa Ink','Amiri',serif;
+  font-weight:700;
+  font-size:clamp(1.9rem, 6.5vw, 2.6rem);
+  margin:0;
+  background:linear-gradient(180deg, #fff7d6 0%, var(--gold-light) 50%, var(--gold) 100%);
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+  line-height:1.3;
+}
+
+/* ======================================================
+   DUA CARDS
+====================================================== */
+.duas{display:flex; flex-direction:column; gap:22px; margin-top:22px}
+
+.dua{
+  background:linear-gradient(165deg, rgba(22,26,51,0.85) 0%, rgba(28,33,66,0.7) 100%);
+  border:1px solid var(--hairline);
+  border-radius:var(--radius-lg);
+  padding:28px 22px 24px;
+  position:relative;
+  backdrop-filter:blur(8px);
+  -webkit-backdrop-filter:blur(8px);
+  box-shadow:var(--shadow);
+  opacity:0; transform:translateY(12px);
+  animation:duaIn .6s var(--ease) forwards;
+}
+.dua:nth-child(1){animation-delay:.05s}
+.dua:nth-child(2){animation-delay:.10s}
+.dua:nth-child(3){animation-delay:.15s}
+.dua:nth-child(4){animation-delay:.20s}
+.dua:nth-child(n+5){animation-delay:.25s}
+@keyframes duaIn{ to{opacity:1; transform:translateY(0)} }
+
+.dua::before{
+  content:"❖";
+  position:absolute;
+  top:-12px; right:50%; transform:translateX(50%);
+  background:var(--bg);
+  color:var(--gold);
+  width:28px; height:28px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:14px;
+  border-radius:50%;
+  border:1px solid var(--hairline-strong);
+  box-shadow:0 0 0 4px var(--bg);
+}
+
+.dua .ar{
+  font-family:'Amiri', serif;
+  font-size:calc(1.45rem * var(--scale));
+  line-height:2.1;
+  color:#fbf6e3;
+  text-align:center;
+  font-weight:400;
+  margin:6px 0 4px;
+  text-shadow:0 1px 18px rgba(212,175,55,0.06);
+  word-spacing:1px;
+}
+
+.divider{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  margin:18px 0 16px;
+  opacity:.7;
+}
+.divider .l{
+  width:60px; height:1px;
+  background:linear-gradient(90deg, transparent, var(--gold) 50%, transparent);
+}
+.divider .d{ color:var(--gold); font-size:8px; line-height:1 }
+
+.dua .label{
+  display:inline-block;
+  font-size:calc(.7rem * var(--scale));
+  letter-spacing:4px;
+  text-transform:uppercase;
+  color:var(--gold);
+  margin-bottom:8px;
+  font-weight:500;
+  opacity:.85;
+}
+
+.dua .ku{
+  font-family:'Vazirmatn', sans-serif;
+  font-size:calc(.98rem * var(--scale));
+  line-height:1.95;
+  color:var(--text-soft);
+  text-align:center;
+  font-weight:400;
+}
+
+/* ======================================================
+   SECTION 8 — GIFT CARD (extra ornate)
+====================================================== */
+.dua.gift{
+  background:
+    radial-gradient(700px 400px at 50% 0%, rgba(212,175,55,0.12), transparent 60%),
+    linear-gradient(165deg, #1a1e3d 0%, #221b3c 100%);
+  border:1px solid rgba(212,175,55,0.35);
+  padding:48px 26px 38px;
+  position:relative;
+}
+.dua.gift::before{ content:none }
+.dua.gift .corner{
+  position:absolute;
+  width:42px; height:42px;
+  border:1px solid var(--gold);
+  opacity:.5;
+}
+.dua.gift .corner.tl{ top:14px; right:14px; border-bottom:none; border-left:none }
+.dua.gift .corner.tr{ top:14px; left:14px; border-bottom:none; border-right:none }
+.dua.gift .corner.bl{ bottom:14px; right:14px; border-top:none; border-left:none }
+.dua.gift .corner.br{ bottom:14px; left:14px; border-top:none; border-right:none }
+.dua.gift .crest{
+  text-align:center;
+  color:var(--gold);
+  font-size:22px;
+  margin-bottom:14px;
+  filter:drop-shadow(0 0 12px var(--gold-glow));
+}
+.dua.gift .ar{ font-size:calc(1.55rem * var(--scale)) }
+
+/* ======================================================
+   FOOTER
+====================================================== */
+footer{
+  text-align:center;
+  margin:60px auto 30px;
+  padding:0 20px;
+  color:var(--text-muted);
+  font-size:calc(.78rem * var(--scale));
+  line-height:1.8;
+}
+footer .ornament{ color:var(--gold); margin-bottom:10px; opacity:.6 }
+
+/* ======================================================
+   FLOATING SETTINGS BUTTON
+====================================================== */
+.fab{
+  position:fixed;
+  bottom:calc(20px + env(safe-area-inset-bottom));
+  left:20px;
+  width:54px; height:54px;
+  border-radius:50%;
+  border:1px solid var(--hairline-strong);
+  background:linear-gradient(160deg, var(--surface) 0%, var(--surface-2) 100%);
+  color:var(--gold);
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer;
+  box-shadow:var(--shadow);
+  transition:transform .3s var(--ease), box-shadow .3s;
+  -webkit-tap-highlight-color:transparent;
+  z-index:50;
+}
+.fab:hover, .fab:active{
+  transform:scale(1.06) rotate(45deg);
+  box-shadow:var(--shadow-gold);
+}
+.fab svg{ width:22px; height:22px }
+
+/* ======================================================
+   SETTINGS BOTTOM SHEET
+====================================================== */
+.backdrop{
+  position:fixed; inset:0;
+  background:rgba(5,7,15,0.7);
+  backdrop-filter:blur(6px);
+  -webkit-backdrop-filter:blur(6px);
+  opacity:0; pointer-events:none;
+  transition:opacity .35s var(--ease);
+  z-index:60;
+}
+.backdrop.show{ opacity:1; pointer-events:auto }
+
+.sheet{
+  position:fixed;
+  bottom:0; left:0; right:0;
+  background:linear-gradient(180deg, #14172e 0%, #0e1124 100%);
+  border-top:1px solid var(--hairline-strong);
+  border-radius:24px 24px 0 0;
+  padding:18px 22px calc(28px + env(safe-area-inset-bottom));
+  transform:translateY(100%);
+  transition:transform .4s var(--ease);
+  z-index:70;
+  box-shadow:0 -30px 80px -20px rgba(0,0,0,0.6);
+}
+.sheet.show{ transform:translateY(0) }
+.sheet .handle{
+  width:42px; height:4px;
+  background:var(--hairline-strong);
+  border-radius:99px;
+  margin:0 auto 16px;
+}
+.sheet h4{
+  font-size:calc(1rem * var(--scale));
+  margin:0 0 6px;
+  color:var(--gold);
+  text-align:center;
+  font-weight:600;
+  letter-spacing:1px;
+}
+.sheet .sub{
+  text-align:center;
+  font-size:calc(.82rem * var(--scale));
+  color:var(--text-muted);
+  margin-bottom:20px;
+}
+.sizes{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:8px;
+}
+.sizes button{
+  background:var(--surface);
+  border:1px solid var(--hairline);
+  color:var(--text-soft);
+  padding:14px 6px;
+  border-radius:14px;
+  font-family:'Vazirmatn',sans-serif;
+  font-weight:500;
+  cursor:pointer;
+  transition:all .3s var(--ease);
+  -webkit-tap-highlight-color:transparent;
+  font-size:.85rem;
+  line-height:1.3;
+}
+.sizes button .big{
+  display:block;
+  font-family:'Amiri',serif;
+  color:var(--gold-light);
+  margin-bottom:2px;
+}
+.sizes button[data-size="1"] .big{ font-size:.95rem }
+.sizes button[data-size="2"] .big{ font-size:1.15rem }
+.sizes button[data-size="3"] .big{ font-size:1.4rem }
+.sizes button[data-size="4"] .big{ font-size:1.7rem }
+.sizes button.active{
+  background:linear-gradient(160deg, rgba(212,175,55,0.18), rgba(212,175,55,0.05));
+  border-color:var(--gold);
+  color:var(--gold-light);
+  box-shadow:0 0 0 3px var(--gold-glow);
+}
+
+.sheet .close{
+  display:block;
+  margin:18px auto 0;
+  background:transparent;
+  border:none;
+  color:var(--text-muted);
+  font-family:'Vazirmatn',sans-serif;
+  font-size:.85rem;
+  cursor:pointer;
+  padding:6px 16px;
+}
+.sheet .close:hover{ color:var(--gold) }
+
+/* hide native scrollbar styling on iOS */
+html, body{ overscroll-behavior-y:contain }
+
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <!-- ===== HOME VIEW ===== -->
+  <div id="view-home">
+
+    <div class="crown" aria-hidden="true">
+      <span class="line"></span>
+      <span class="star">✦</span>
+      <span class="line"></span>
+    </div>
+
+    <section class="hero">
+      <div class="eyebrow">يوم عرفة</div>
+      <h1>دوعای ڕۆژی عەرەفە</h1>
+      <p class="hadith font-ar" dir="rtl">
+        «أفضلُ الدعاءِ دعاءُ يومِ عرفةَ، وأفضلُ ما قلتُ أنا والنبيونَ من قبلي:
+        لا إلهَ إلا اللهُ وحدَهُ لا شريكَ لَه»
+        <small>ـ پێغەمبەری خوا ﷺ ـ</small>
+      </p>
+    </section>
+
+    <nav class="grid" id="sections-grid" aria-label="بەشەکانی دوعا"></nav>
+
+    <footer>
+      <div class="ornament">❖ ✦ ❖</div>
+      <div>اللهم تقبَّل منا — خودایە لێمان وەربگرە</div>
+    </footer>
+  </div>
+
+  <!-- ===== SECTION VIEW ===== -->
+  <div id="view-section">
+    <button class="back" id="btn-back" aria-label="گەڕانەوە">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M9 6l6 6-6 6"/></svg>
+      گەڕانەوە
+    </button>
+
+    <div class="section-head">
+      <div class="label" id="section-label"></div>
+      <h2 id="section-title"></h2>
+    </div>
+
+    <div class="duas" id="duas-container"></div>
+
+    <footer>
+      <div class="ornament">❖</div>
+      <div>اللهم اجعلنا من المقبولين</div>
+    </footer>
+  </div>
+</div>
+
+<!-- Floating settings button -->
+<button class="fab" id="fab" aria-label="ڕێکخستن">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <circle cx="12" cy="12" r="3"/>
+    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+  </svg>
+</button>
+
+<!-- Settings sheet -->
+<div class="backdrop" id="backdrop"></div>
+<div class="sheet" id="sheet" role="dialog" aria-labelledby="sheet-title">
+  <div class="handle"></div>
+  <h4 id="sheet-title">قەبارەی فۆنت</h4>
+  <div class="sub">ئەو قەبارەیە هەڵبژێرە کە بۆ خوێندنەوەکە ئاسوودەترە</div>
+  <div class="sizes" id="sizes">
+    <button data-size="1" type="button"><span class="big">أ</span>بچووک</button>
+    <button data-size="2" type="button"><span class="big">أ</span>ستاندارد</button>
+    <button data-size="3" type="button"><span class="big">أ</span>گەورە</button>
+    <button data-size="4" type="button"><span class="big">أ</span>زۆر گەورە</button>
+  </div>
+  <button class="close" id="sheet-close" type="button">داخستن</button>
+</div>
+
+<script>
+/* ======================================================
+   DATA — هەموو دوعایەکان بەش بەش
+====================================================== */
+const SECTIONS = [
+  /* ===== 1 ===== */
+  {
+    id: 1,
+    name: "پێشەکی و فەزڵ",
+    long: "پێشەکی و فەزڵی دوعای ڕۆژی عەرەفە",
+    desc: "باشترین زیکر و دوعای ئەم ڕۆژە پیرۆزە",
+    duas: [
+      {
+        ar: `ورد في المأثور عن النبي صلّى الله عليه وسلّم أنّ أفضل ذكر ودعاء في يوم عرفة هو: "لا إله إلا الله وحده لا شريك له"، ومن الأفضل أن يُكثر المسلم من هذا الذكر اقتداءً بالنبي عليه الصلاة والسلام.`,
+        ku: `لە فەرموودە گێڕدراوەکان لە پێغەمبەرەوە (صلی الله علیه وسلم) هاتووە کە باشترین زیکر و پاڕانەوە لە ڕۆژی عەرەفەدا بریتییە لە: "لا إله إلا الله وحده لا شريك له"، وە باشتر وایە موسڵمان زۆر ئەم زیکرە بکات وەک پەیڕەویکردن بۆ پێغەمبەر (سەلامی خوای لەسەر بێت).`
+      },
+      {
+        ar: `قال رسول الله صلّى الله عليه وسلّم: (أفضلُ الدعاء دعاءُ يومِ عرفةَ وأفضلُ ما قلتُ أنا والنبيون من قبلي: لا إله إلا الله وحده لا شريك له).`,
+        ku: `پێغەمبەری خوا (صلی الله علیه وسلم) دەفەرموێت: (باشترین دوعا، دوعای ڕۆژی عەرەفەیە، و باشترین شتێک کە من و پێغەمبەرانی پێش من فەرموومانبێت بریتییە لە: هیچ پەرستراوێک نییە شایستەی پەرستن بێت بە ڕاستی جگە لە ئەڵڵا، کە تەنهایە و چاوەنووق و هاوبەشی نییە).`
+      }
+    ]
+  },
+
+  /* ===== 2 ===== */
+  {
+    id: 2,
+    name: "دوعا گشتگیرەکان",
+    long: "دوعا گشتگیرەکان",
+    desc: "کۆمەڵە دوعای فراوان بۆ هەموو شت",
+    duas: [
+      {
+        ar: `اللهم إني أسألك من الخير كله عاجله وآجله، ما علمت منه وما لم أعلم، وأعوذ بك من الشر كله عاجله وآجله، ما علمت منه وما لم أعلم، اللهم إني أسألك من خير ما سألك منه عبدك ونبيك، وأعوذ بك من شر ما عاذ به عبدك ونبيك، اللهم إني أسألك الجنة وما قرب إليها من قول أو عمل، وأعوذ بك من النار وما قرب إليها من قول أو عمل، وأسألك أن تجعل كل قضاء قضيته لي خيرًا.`,
+        ku: `خودایە، من داوای هەموو خێر و چاکەیەک لە تۆ دەکەم، چ ئەوەی لەم نزيکەدا بێت یان لە دواییدا بێت، ئەوەی لێی دەزانم و ئەوەی نایزانم. وە پەنا دەگرم بە تۆ لە هەموو شەڕ و خراپەیەک، چ ئەوەی لەم نزیکەدا بێت یان لە دواییدا، ئەوەی لێی دەزانم و ئەوەی نایزانم. خودایە، من داوای ئەو خێرەت لێ دەکەم کە بەندە و پێغەمبەرەکەت داوای کردووە، و پەنا دەگرم بە تۆ لەو شەڕەی کە بەندە و پێغەمبەرەکەت پەنایان پێ گرتووی. خودایە، من داوای بەهەشت و هەر وتە و کردەوەیەک دەکەم کە لێی نزیکم دەکاتەوە، وە پەنا دەگرم بە تۆ لە ئاگری دۆزەخ و هەر وتە و کردەوەیەک کە لێی نزیکم دەکاتەوە. هەروەها داوات لێ دەکەم هەر بڕیار و قەدەرێک کە بۆت بڕیار داوم، بۆم بکەیت بە خێر.`
+      },
+      {
+        ar: `(اللهم إنك عفو تحب العفو فاعف عني)`,
+        ku: `(خودایە، بەڕاستی تۆ لێبوردەی و لێبوردنیشت خۆش دەوێت، دەی لێم خۆش ببە)`
+      },
+      {
+        ar: `(اللهم آتنا في الدنيا حسنة وفي الآخرة حسنة وقنا عذاب النار)`,
+        ku: `(خودایە، لە دونیادا چاکەمان پێ ببەخشە و لە قیامەتیشدا چاکەمان پێ ببەخشە و لە سزای ئاگری دۆزەخ بمانپارێزە)`
+      },
+      {
+        ar: `(ربنا تقبل منا إنك أنت السميع العليم)`,
+        ku: `(پەروەردگارمان، لێمان وەربگرە، بەڕاستی تۆ بیسەر و زانای)`
+      },
+      {
+        ar: `(ربنا آتنا من لدنك رحمة وهيئ لنا من أمرنا رشدًا)`,
+        ku: `(پەروەردگارمان، لە لایەن خۆتەوە ڕەحمەتێکمان پێ ببەخشە و کار و بارەکانمان بۆ ڕێک بخە و بەرەو سەرکەوتن ڕێنموونیمان بکە)`
+      },
+      {
+        ar: `(ربنا لا تزغ قلوبنا بعد إذ هديتنا وهب لنا من لدنك رحمة)`,
+        ku: `(پەروەردگارمان، دڵەکانمان لامەدە دوای ئەوەی هیدایەتت داوین، و لە لایەن خۆتەوە ڕەحمەتێکمان پێ ببەخشە)`
+      },
+      {
+        ar: `اللهم إني أسألك العافية في الدنيا والآخرة، اللهم إني أسألك العفو والعافية في ديني ودنياي وأهلي ومالي، اللهم استر عوراتي وآمن روعاتي، اللهم احفظني من بين يدي، ومن خلفي، وعن يميني، وعن شمالي، ومن فوقي، وأعوذ بعظمتك أن أغتال من تحتي.`,
+        ku: `خودایە، من داوای عافیەت دەکەم لە دونیا و قیامەتدا، خودایە داوای لێبوردن و عافیەت دەکەم لە ئایینەکەم و ژیانم و خێزانم و ماڵ و سامانمدا. خودایە، عەیبەکانم دابپۆشە و ترسەکانم بڕەوێنەوە. خودایە، بمپارێزە لە بەردەممەوە، و لە پشتەوەمەوە، و لە لای ڕاستمەوە، و لە لای چەپمەوە، و لە سەروومەوە، وە پەنا دەگرم بە گەورەیی تۆ کە لە ژێرەوەمەوە لەناو ببرێم.`
+      },
+      {
+        ar: `اللهم أنت ربي، لا إله إلا أنت، خلقتني وأنا عبدك، وأنا على عهدك ووعدك ما استطعت، أعوذ بك من شر ما صنعت، وأبوء لك بنعمتك عليّ، وأعترف بذنوبي، فاغفر لي ذنوبي إنه لا يغفر الذنوب إلا أنت.`,
+        ku: `خودایە، تۆ پەروەردگاری منی، هیچ پەرستراوێک نییە جگە لە تۆ، تۆ منت دروست کردووە و من بەندەی تۆم، و من لەسەر پەیمان و بەڵێنی تۆم تا ئەو پەڕی توانام. پەنا دەگرم بە تۆ لە شەڕی ئەو کردەوانەی ئەنجامم داون، دان بە نیعمەتەکانتدا دەنێم بەسەرمەوە، و دان بە گوناهەکانمدا دەنێم، دەی لێم خۆش ببە، چونکە بەڕاستی کەس نییە لە گوناهەکان خۆش ببێت جگە لە تۆ.`
+      },
+      {
+        ar: `اللهم لك الحمد أنت قيّم السماوات والأرض ومن فيهن، ولك الحمد لك ملك السماوات والأرض ومن فيهن، ولك الحمد أنت نور السماوات والأرض ومن فيهن، ولك الحمد أنت ملك السماوات والأرض، ولك الحمد أنت الحق ووعدك الحق، ولقاؤك حق، وقولك حق، والجنة حق، والنار حق، والنبيون حق، ومحمد صلى الله عليه وسلم حق، والساعة حق، اللهم لك أسلمت، وبك آمنت، وعليك توكلت، وإليك أنبت، وبك خاصمت، وإليك حاكمت، فاغفر لي ما قدمت وما أخرت، وما أسررت وما أعلنت، أنت المقدم، وأنت المؤخر، لا إله إلا أنت.`,
+        ku: `خودایە، ستایش بۆ تۆیە تۆ ڕاگری ئاسمانەکان و زەوی و هەرچییەکیان تێدایە، ستایش بۆ تۆیە پاشایەتی ئاسمانەکان و زەوی و هەرچییەکیان تێدایە هەر بۆ تۆیە، ستایش بۆ تۆیە تۆ ڕووناکی ئاسمانەکان و زەوی و هەرچییەکیان تێدایە، ستایش بۆ تۆیە تۆ پاشای ئاسمانەکان و زەویت، ستایش بۆ تۆیە تۆ حەق و ڕاستیت، و بەڵێنەکەت حەقە، و دیدارت حەقە، و وتەت حەقە، و بەهەشت حەقە، و دۆزەخ حەقە، و پێغەمبەران حەقن، و محمد (صلى الله عليه وسلم) حەقە، و ڕۆژی قیامەت حەقە. خودایە، بۆ تۆ تەسلیم بووم، و بە تۆ ئیمانم هێنا، و پشتم بە تۆ بەست، و بەرەو لای تۆ گەڕامەوە، و بە پشتیوانی تۆ ڕووبەڕووی نەیاران بوومەوە، و هەر تۆم کردە دادوەر. دەی لێم خۆش ببە لەوەی پێشتر کردوومە و ئەوەی دواتر دەیکەم، و ئەوەی بە پەنهانی و ئەوەی بە ئاشکرا کردوومە. تۆ پێشخەر و تۆ دواخەریت، هیچ پەرستراوێک نییە جگە لە تۆ.`
+      },
+      {
+        ar: `اللهم رب السماوات ورب الأرض ورب العرش العظيم، ربنا ورب كل شيء، فالق الحب والنوى، ومنزل التوراة والإنجيل والفرقان، أعوذ بك من شر كل شيء أنت آخذ بناصيته، اللهم أنت الأول فليس قبلك شيء، وأنت الآخر فليس بعدك شيء، وأنت الظاهر فليس فوقك شيء، وأنت الباطن فليس دونك شيء، اقض عنا الدين، وأغننا من الفقر.`,
+        ku: `خودایە، ئەی پەروەردگاری ئاسمانەکان و زەوی و پەروەردگاری عەرشی مەزن، پەروەردگاری ئێمە و پەروەردگاری هەموو شتێک، ئەی قڵێشێنەری دەنکەوەر و ناوکە، و ناردووی تەورات و ئینجیل و قورئان. پەنا دەگرم بە تۆ لە شەڕی هەموو شتێک کە چارەنووسی بە دەستی تۆیە. خودایە تۆ یەکەمی و هیچ شتێک پێش تۆ نەبووە، و تۆ کۆتاییت و هیچ شتێک دوای تۆ نامێنێت، و تۆ دیار و بەرزی و هیچ شتێک لە سەرووی تۆ نییە، و تۆ پەنهانی و هیچ شتێک لە تۆ نزیکتر نییە. قەرزەکانمان بۆ بدەرەوە و لە هەژاری دەوڵەمەندمان بکە.`
+      },
+      {
+        ar: `(اللهم مالك الملك تؤتي الملك من تشاء، وتنزع الملك ممن تشاء، وتعز من تشاء، وتذل من تشاء، بيدك الخير إنك على كل شيء قدير. رحمن الدنيا والآخرة ورحيمهما، تعطيهما من تشاء، وتمنع منهما من تشاء، ارحمني رحمة تغنيني بها عن رحمة من سواك)`,
+        ku: `(خودایە، ئەی خاوەنی پاشایەتی، پاشایەتی دەدەیت بە هەرکەس بتەوێت، و دەیسێنیتەوە لە هەرکەس بتەوێت، و سەربەرزی دەکەیت هەرکەس بتەوێت، و ڕیسوای دەکەیت هەرکەس بتەوێت، هەموو خێرێک بە دەستی تۆیە و تۆ بەسەر هەموو شتێکدا بەتوانایت. ئەی میهرەبان و بەزەییداری دونیا و قیامەت، لە هەرکامیان بتەوێت دەبەخشیت و لە هەرکەس بتەوێت دەگریتەوە، ڕەحمەتێکم پێ ببەخشە کە بێ نیازم بکات لە ڕەحمەتی هەر کەسێکی تر جگە لە تۆ)`
+      },
+      {
+        ar: `(اللهم إني أعوذ بك من البخل وأعوذ بك من الجبن وأعوذ بك من أن أرد إلى أرذل العمر وأعوذ بك من فتنة الدنيا وأعوذ بك من عذاب القبر)`,
+        ku: `(خودایە، من پەنا دەگرم بە تۆ لە ڕەزیلی، و پەنا دەگرم بە تۆ لە ترسنۆکی، و پەنا دەگرم بە تۆ لەوەی بگەمە پەککەوتەترین تەمەن، و پەنا دەگرم بە تۆ لە فیتنەی دونیا و لە سزای ناو گۆڕ)`
+      },
+      {
+        ar: `(اللهم إني أعوذ بك من الكسل والهرم والمأثم والمغرم، ومن فتنة القبر وعذاب القبر، ومن فتنة النار وعذاب النار، ومن شر فتنة الغنى، وأعوذ بك من فتنة الفقر، وأعوذ بك من فتنة المسيح الدجال، اللهم اغسل عني خطاياي بماء الثلج والبرد، ونق قلبي من الخطايا كما نقيت الثوب الأبيض من الدنس، وباعد بيني وبين خطاياي كما باعدت بين المشرق والمغرب)`,
+        ku: `(خودایە، من پەنا دەگرم بە تۆ لە تەمبەڵیی و پیریی پەککەوتە و گوناه و قەرزاریی، و لە فیتنە و سزای ناو گۆڕ، و لە فیتنە و سزای ئاگری دۆزەخ، و لە خراپەی فیتنەی دەوڵەمەندیی، و پەنا دەگرم بە تۆ لە فیتنەی هەژاریی و لە فیتنەی مەسیحی دەججال. خودایە، گوناهەکانم بە ئاوی بەفر و تەرزە بشۆوە، و دڵم لە هەڵەکان پاک بکەرەوە هەروەک چۆن جلی سپی لە چڵک پاک دەبێتەوە، و نێوان من و گوناهەکانم دوور بخەرەوە هەروەک چۆن نێوان ڕۆژهەڵات و ڕۆژئاوات دوور خستووەتەوە)`
+      },
+      {
+        ar: `(اللهم بعلمك الغيب وقدرتك على الخلق، أحيني ما علمت الحياة خيرًا لي، وتوفني إذا علمت الوفاة خيرًا لي، اللهم إني أسألك خشيتك في الغيب والشهادة، وأسألك كلمة الحق في الرضا والغضب، وأسألك القصد في الفقر والغنى، وأسألك نعیمًا لا ينفد، وأسألك قرة عين لا تنقطع، وأسألك الرضا بعد القضاء، وأسألك برد العيش بعد الموت، وأسألك لذة النظر إلى وجهك، والشوق إلى لقائك في غير ضراء مضرة، ولا فتنة مضلة، اللهم زينا بزينة الإيمان، واجعلنا هداة مهتدين)`,
+        ku: `(خودایە، بە زانستت بە غەیب و بە دەسەڵاتت بەسەر دروستکراوەکاندا، بمهێڵەرەوە مادام دەزانیت ژیان بۆ من خێرە، و بمرێنە ئەگەر دەزانیت مردن بۆ من خێرە. خودایە، داوای ترسی تۆ دەکەم لە پەنهان و ئاشکرادا، و داوای وتەی حەق دەکەم لە کاتی ڕەزامەندی و تووڕەییدا، و داوای میانڕەوی دەکەم لە هەژاری و دەوڵەمەندیدا. داوای نیعمەتێک دەکەم کە تەواو نەبێت، و شادییەک کە نەبڕێتەوە. داوای ڕەزامەندی دەکەم دوای قەدەر، و داوای ژیانێکی ئاسوودە دەکەم دوای مردن، و داوای چێژی تەماشاکردنی ڕووی تۆ و شەوقی دیدارت دەکەم، بە بێ تووشبوون بە زیان و فیتنەی سەرلێشێوێنەر. خودایە، بە زینەتی ئیمان بمانڕازێنەرەوە و بمانگێڕە لە ڕێنماییکارانی ڕێگای ڕاست)`
+      },
+      {
+        ar: `اللهم إنّا نسألك زيادة في الدين، وبركة في العمر، وصحة في الجسد، وسعة في الرزق، وتوبة قبل الموت، وشهادة عند الموت، ومغفرة بعد الموت، وعفواً عند الحساب، وأماناً من العذاب، ونصيباً من الجنة، وارزقنا النظر إلى وجهك الكريم. يا ودود، يا ودود، يا ودود، يا ذا العرش المجيد، يا مبدئ يا معيد، يا فعالاً لما يريد، أسألك بنور وجهك الذي ملأ أركان عرشك، وأسألك بقدرتك التي قدرت بها على جميع خلقك، وأسألك برحمتك التي وسعت كل شيء، لا إله إلا أنت، يا مغيث أغثني.`,
+        ku: `خودایە، ئێمە داوای زیادبوون لە ئایین و بەرەکەت لە تەمەن و لەشساغی و فراوانی ڕۆزی و تەوبەی پێش مردن و شایەتومانی کاتی مردن و لێخۆشبوونی دوای مردن و لێبوردنی کاتی حیساب و پارێزراوی لە سزا و بەشێک لە بەهەشت دەکەین، و بینینی ڕووی کەریمت ڕۆزیمان بکە. ئەی خاوەن میهر و خۆشەویستی، ئەی خاوەنی عەرشی پڕ شکۆ، ئەی دەسپێکەر و دووبارەکەرەوە، ئەی ئەنجامدەر بۆ هەرچی بتەوێت، داوات لێ دەکەم بەو نوورەی ڕووت کە گۆشەکانی عەرشی گرتووەتەوە، و بەو دەسەڵاتەی بەسەر هەموو دروستکراوەکانتدا هەیە، و بەو ڕەحمەتەی هەموو شتێکی گرتووەتەوە، هیچ پەرستراوێک نییە جگە لە تۆ، ئەی هاناڕەس، بە هانامەوە وەرە.`
+      }
+    ]
+  },
+
+  /* ===== 3 ===== */
+  {
+    id: 3,
+    name: "دوعا بۆ خۆم",
+    long: "دوعا بۆ خۆم لە ڕۆژی عەرەفە",
+    desc: "دوعای تایبەت بۆ خۆت",
+    duas: [
+      {
+        ar: `(اللهم اجعل لي في قلبي نورًا، وفي لساني نورًا، وفي سمعي نورًا، وفي بصري نورًا، ومن فوقي نورًا، ومن تحتي نورًا، وعن يميني نورًا، وعن شمالي نورًا، ومن بين يدي نورًا، ومن خلفي نورًا، واجعل في نفسي نورًا، وأعظم لي نورًا)`,
+        ku: `(خودایە، لە ناو دڵمدا ڕووناکییەک دابنێ، و لەسەر زمانم ڕووناکییەک، و لە بیستنمدا ڕووناکییەک، و لە بینینمدا ڕووناکییەک، و لە سەروومەوە ڕووناکییەک، و لە ژێرەوەمەوە ڕووناکییەک، و لە لای ڕاستمەوە ڕووناکییەک، و لە لای چەپمەوە ڕووناکییەک، و لە بەردەممەوە ڕووناکییەک، و لە پشتەوەمەوە ڕووناکییەک، و لە دەروونمدا ڕووناکییەک دابنێ و ڕووناکییەکەم بۆ گەورە بکە)`
+      },
+      {
+        ar: `(ربِّ اغفر لي خطيئتي وجهلي، وإسرافي في أمري كله، وما أنت أعلم به مني، اللهم اغفر لي خطاياي، وعمدي وجهلي وهزلي، وكل ذلك عندي، اللهم اغفر لي ما قدمت وما أخرت، وما أسررت وما أعلنت، أنت المقدم وأنت المؤخر، وأنت على كل شيء قدير)`,
+        ku: `(پەروەردگارم، لێم خۆش ببە لە هەڵە و نەزانی و زێدەڕۆییم لە هەموو کارەکانمدا، و لەوەی تۆ لە من زاناتریت پێی. خودایە، لێم خۆش ببە لە گوناهەکانم، و لەوەی بە ئەنقەست یان بە نەزانی یان بە گاڵتە کردوومە، کە هەمووی لە مندا هەیە. خودایە، لێم خۆش ببە لەوەی پێشتر کردوومە و ئەوەی دواتر دەیکەم، و ئەوەی بە پەنهانی و بە ئاشکرا ئەنجامم داوە. تۆ پێشخەر و دواخەریت، و تۆ بەسەر هەموو شتێکدا بەتوانایت)`
+      },
+      {
+        ar: `اللهم إني أسألك علمًا نافعًا ورزقًا طيبًا وعملاً متقبلاً.`,
+        ku: `خودایە، من داوای زانستێکی بەسوود و ڕۆزییەکی پاک و کردەوەیەکی وەرگیراوت لێ دەکەم.`
+      },
+      {
+        ar: `(اللهم رحمتك أرجو فلا تكلني إلى نفسي طرفة عين، وأصلح لي شأني كله لا إله إلا أنت)`,
+        ku: `(خودایە، تەنها ئومێدم بە ڕەحمەتی تۆیە، دەی بۆ چاوتروکانێکیش پشتم بە نەفسی خۆم مەبەستە، و هەموو کارەکانم بۆ چاک بکە، هیچ پەرستراوێک نییە جگە لە تۆ)`
+      },
+      {
+        ar: `(اللهم إني عبدك، وابن عبدك، وابن أمتك، ناصيتي بيدك، ماض في حكمك، عدل في قضاؤك، أسألك بكل اسم هو لك سميت به نفسك، أو أنزلته في كتابك، أو علمته أحدا من خلقك، أو استأثرت به في علم الغيب عندك، أن تجعل القرآن ربيع قلبي، ونور صدري، وجلاء حزني، وذهاب همي)`,
+        ku: `(خودایە، من بەندەی تۆم و کوڕی بەندەی تۆم و کوڕی کەنیزەکی تۆم، چارەنووسم بە دەستی تۆیە، بڕیارت بەسەرمدا جێبەجێ دەبێت، قەزای تۆ لەبارەی منەوە دادپەروەرانەیە. داوات لێ دەکەم بە هەموو ناوێکی خۆت کە خۆتت پێ ناو ناوە، یان لە کتێبەکەتدا ناردووتە، یان فێری یەکێک لە دروستکراوەکانت کردووە، یان لە زانستی غەیب لای خۆتدا هێشتووتەتەوە، کە قورئان بکەیت بە بەهاری دڵم و نووری سینەم و ڕەوێنەرەوەی خەمم و نەمانی دڵتەنگییەکانم)`
+      },
+      {
+        ar: `(اللهم إني أعوذ بك من العجز والكسل، والجبن والبخل، والهرم وعذاب القبر، اللهم آت نفسي تقواها وزكها أنت خير من زكاها أنت وليها ومولاها، اللهم إني أعوذ بك من علم لا ينفع، ومن قلب لا يخشع ومن نفس لا تشبع ومن دعوة لا يستجاب لها)`,
+        ku: `(خودایە، من پەنا دەگرم بە تۆ لە بێدەسەڵاتی و تەمبەڵیی و ترسنۆکی و ڕەزیلی و پیری و سزای ناو گۆڕ. خودایە، تەقوا بدە بە دەروونم و پاکی بکەرەوە تۆ باشترین پاککەرەوەی، تۆ سەرپەرشتیار و خاوەنی ئەوی. خودایە، پەنا دەگرم بە تۆ لە زانستێک سوودی نەبێت، و لە دڵێک نەترسێت، و لە دەروونێک تێر نەبێت، و لە دوعایەک وەڵام نەدرێتەوە)`
+      },
+      {
+        ar: `(اللهم أصلح لي ديني الذي هو عصمة أمري، وأصلح لي دنياي التي فيها معاشي، وأصلح لي آخرتي التي فيها معادي، واجعل الحياة زيادة لي في كل خير، واجعل الموت راحة لي من كل شر)`,
+        ku: `(خودایە، ئایینەکەم بۆ چاک بکە کە پارێزەری کارەکانمە، و دونیایەم بۆ چاک بکە کە بژێوی منی تێدایە، و قیامەتەم بۆ چاک بکە کە گەڕانەوەم بۆ ئەوێیە، و ژیانم لێ بکە بە مایەی زیادبوونی هەموو خێرێک، و مردنم لێ بکە بە حەسانەوە لە هەموو شەڕێک)`
+      },
+      {
+        ar: `(اللهم إني أسألك إيمانًا لا يرتد، ونعيمًا لا ينفد، ومرافقة النبي صلى الله عليه وسلم في أعلى غرف الجنة، جنة الخلد)`,
+        ku: `(خودایە، من داوای ئیمانێک دەکەم پاشەکشە نەکات، و نیعمەتێک تەواو نەبێت، و هاووەڵایەتی پێغەمبەر (صلى الله عليه وسلم) لە بەرزترین پلەی بەهەشتدا)`
+      },
+      {
+        ar: `(اللهم إني أعوذ بك من علم لا ينفع، وقلب لا يخشع، ودعاء لا يُسمع، ونفس لا تشبع، اللهم إني أعوذ بك من هؤلاء الأربع)`,
+        ku: `(خودایە، پەنا دەگرم بە تۆ لە زانستێک سوودی نەبێت و دڵێک نەترسێت و دوعایەک نەبیسرێت و دەروونێک تێر نەبێت، خودایە پەنا دەگرم بە تۆ لەم چوارە)`
+      },
+      {
+        ar: `اللهم اكفني بحلالك عن حرامك واغنني بفضلك عمن سواك.`,
+        ku: `خودایە، بە حەڵاڵی خۆت بمپارێزە لە حەرامت و بە فەزڵی خۆت بێ نیازم بکە لە هەرچی جگە لە خۆتە.`
+      },
+      {
+        ar: `اللهم اغفر لي، وارحمني، واهدني، وعافني، وارزقني.`,
+        ku: `خودایە، لێم خۆش ببە، و ڕەحمتم پێ بکە، و هیدایەتم بدە، و عافیەت و ڕۆزیم پێ ببەخشە.`
+      },
+      {
+        ar: `ربِّ زدني علمًا.`,
+        ku: `پەروەردگارم، زانست و زانیاریم زیاد بکە.`
+      },
+      {
+        ar: `ربِّ هب لي حكمًا وألحقني بالصالحين.`,
+        ku: `پەروەردگارم، حیکمەتم پێ ببەخشە و بمگەیەنە بە پیاوچاکان.`
+      },
+      {
+        ar: `ربِّ أنزلني منزلاً مباركًا وأنت خير المنزلين.`,
+        ku: `پەروەردگارم، لە شوێنێکی پڕ بەرەکەتدا جێگیرم بکە و تۆ باشترینیت بۆ جێگیرکردن.`
+      },
+      {
+        ar: `(لا إله إلا أنت سبحانك إني كنت من الظالمين، اللهم فرج كربتي وآنس وحدتي، واقضِ حاجتي وحوائج أمة محمد صلى الله عليه وسلم، اللهم أخرجني من الظلمات إلى النور، ووفقني في كل مراحل حياتي، واغفر لي ذنوبي يا رب العالمين، اللهم لا تجعلني مع القوم الظالمين، ونجني من كل ضيق، واجعل لي بعده مخرجاً يا أرحم الراحمين)`,
+        ku: `(هیچ پەرستراوێک نییە جگە لە تۆ، پاکی بۆ تۆیە، بەڕاستی من لە ستەمکاران بووم. خودایە، خەمم بڕەوێنەوە و تەنیاییم مەکە بە خەفەت، و پێداویستییەکانی من و ئوممەتی محمد (صلى الله عليه وسلم) جێبەجێ بکە. خودایە، لە تاریکییەکانەوە بەرەو ڕووناکیم ببە و لە هەموو قۆناغەکانی ژیانمدا سەرکەوتووم بکە و لە گوناهەکانم خۆش ببە. خودایە، لەگەڵ ستەمکاراندا جێم مەکە و لە هەموو تەنگییەک ڕزگارم بکە و دەرچەم بۆ بکەرەوە ئەی میهرەبانترین میهرەبانان)`
+      },
+      {
+        ar: `اللهم إني أسألك إيماناً دائماً، وأسألك علماً نافعاً، وأسألك يقيناً صادقاً، وأسألك ديناً قيماً، وأسألك العافية من كل بلية، وأسألك تمام العافية، وأسألك دوام العافية، وأسألك الشكر على العافية، وأسألك الغنى عن الناس. اللهم اجبر كسر قلبي جبراً يتعجب منه أهل السماوات والأرض، جبراً يليق بكرمك وعظمتك وقدرتك يا رب. اللهم فوضت أمري كله، فجمّله خيراً بما شئت، واجعلني يا رب مِمَّن نظرت إليه فرحمته، وسمعت دعاءه فأجبته.`,
+        ku: `خودایە، داوای ئیمانێکی بەردەوام و زانستێکی بەسوود و یەقینێکی ڕاستەقینە و ئایینێکی بەهێز دەکەم. داوای عافیەت لە هەموو بەڵایەک و عافیەتی تەواو و بەردەوام و سوپاسگوزاری عافیەت و بێ نیازی لە خەڵک دەکەم. خودایە، شکاوی دڵم ئاوا بۆ چاک بکەرەوە کە ئەهلی ئاسمان و زەوی لێی سەرسام بن، چاککردنەوەیەک شایستەی کەرەم و گەورەیی و دەسەڵاتی تۆ بێت. خودایە، کارەکانم دەسپێرم بە تۆ، دەی بە خێر بیڕازێنەرەوە، و بمانگێڕە لەوانەی تەماشات کردوون و ڕەحمت پێ کردوون و دوعاکانیانت وەڵام داوەتەوە.`
+      }
+    ]
+  },
+
+  /* ===== 4 ===== */
+  {
+    id: 4,
+    name: "بۆ دایک و باوک",
+    long: "دوعا بۆ دایک و باوک و منداڵەکان",
+    desc: "ڕەحمەت و چاکە بۆ خێزان",
+    duas: [
+      {
+        ar: `(رَّبِّ ارْحَمْهُمَا كَمَا رَبَّيَانِي صَغِيرًا)`,
+        ku: `(پەروەردگارم، ڕەحمیان پێ بکە هەر وەک چۆن ئەوان لە منداڵیدا منیان پەروەردە کرد)`
+      },
+      {
+        ar: `(رَبَّنَا اغْفِرْ لِي وَلِوَالِدَيَّ وَلِلْمُؤْمِنِينَ يَوْمَ يَقُومُ الْحِسَابُ)`,
+        ku: `(پەروەردگارمان، لێم خۆش ببە و لە دایک و باوکم و ئیمانداران خۆش ببە لە ڕۆژی حیسابدا)`
+      },
+      {
+        ar: `(ربِّ اجعلني مقيم الصلاة ومن ذريتي ربنا وتقبل دعاء)`,
+        ku: `(پەروەردگارم، بمگێڕە لەوانەی نوێژ بە ڕێکی دەکەن و لە نەوەکانیشم هەروا، پەروەردگارمان دوعاکەم وەر بگرە)`
+      },
+      {
+        ar: `(ربِّ أوزعني أن أشكر نعمتك التي أنعمت عليَّ وعلى والديَّ وأن أعمل صالحاً ترضاه وأدخلني برحمتك في عبادك الصالحين)`,
+        ku: `(پەروەردگارم، یارمەتیم بدە تا سوپاسی نیعمەتەکانت بکەم کە بەسەر من و دایک و باوکمدا ڕژاندووتە و کردەوەی چاک بکەم کە تۆ لێی ڕازی بیت و بە ڕەحمەتی خۆت بمخە ڕیزی بەندە پیاوچاکەکانتەوە)`
+      },
+      {
+        ar: `(ربنا هب لنا من أزواجنا وذرياتنا قرة أعين واجعلنا للمتقين إماماً)`,
+        ku: `(پەروەردگارمان، لە هاوسەر و نەوەکانمان کەسانێکمان پێ ببەخشە کە شادی چاوەکانمان بن و بمانگێڕە بۆ پێشەوای تەقواداران)`
+      },
+      {
+        ar: `(ربِّ هب لي من لدنك ذرية طيبة إنك سميع الدعاء)`,
+        ku: `(پەروەردگارم، لە لای خۆتەوە نەوەیەکی پاکم پێ ببەخشە بەڕاستی تۆ بیسەری دوعاکانیت)`
+      },
+      {
+        ar: `(تُب علينا إنك أنت التواب الرحيم)`,
+        ku: `(تەوبەمان لێ وەر بگرە بەڕاستی تۆ یەکجار تەوبەوەرگر و میهرەبانیت)`
+      },
+      {
+        ar: `(اللهم لا تجعل ابتلائي في جسدي، ولا في مالي، ولا في أهلي، وسهل علي ما استثقلته نفسي)`,
+        ku: `(خودایە، تاقیکردنەوەکەم مەخە ناو جەستە و ماڵ و خێزانم، و ئەو شتانەی لەسەر دەروونم قورسن بۆم ئاسان بکە)`
+      },
+      {
+        ar: `اللهم إنّا نسألك جميع الرحمة والمغفرة، أصلح ذرياتنا ونياتنا، وألّف بين قلوبنا، واستر عوراتنا، وفرّج همومنا، واشفِ مرضانا، وارحم موتانا، وأعزّ ديننا، ووسّع في أرزاقنا، ومُدَّ في آجالنا على صحّة وعافية، وطاعة وعمل صالح، واجعل قبور أمواتنا روضة من رياض الجنة.`,
+        ku: `خودایە، داوای هەموو ڕەحمەت و لێخۆشبوونێکت لێ دەکەین، نەوە و نییەتەکانمان چاک بکە و دڵەکانمان یەک بخە و عەیبەکانمان دابپۆشە و خەمەکانمان بڕەوێنەوە و نەخۆشەکانمان چاک بکەرەوە و ڕەحم بە مردووەکانمان بکە و ئایینەکەمان سەربەرز بکە و ڕۆزییەکانمان فراوان بکە و تەمەنمان درێژ بکە لەسەر تەندروستی و گوێڕایەڵی و گۆڕی مردووەکانمان بکە بە باخچەی بەهەشت.`
+      }
+    ]
+  },
+
+  /* ===== 5 ===== */
+  {
+    id: 5,
+    name: "ڕەواندنەوەی خەم",
+    long: "دوعا بۆ ڕەواندنەوەی خەم",
+    desc: "دەرچوون لە دڵتەنگی و خەفەت",
+    duas: [
+      {
+        ar: `(ربِّ اشرح لي صدري ويسر لي أمري)`,
+        ku: `(پەروەردگارم، سینەم بۆ فراوان بکە و کارەکانم بۆ ئاسان بکە)`
+      },
+      {
+        ar: `(لا إله إلا الله العظيم الحليم، لا إله إلا الله رب العرش العظيم، لا إله إلا الله رب السماوات ورب الأرض ورب العرش الكريم)`,
+        ku: `(هیچ پەرستراوێک نییە جگە لە ئەڵڵای مەزنی بردبار، هیچ پەرستراوێک نییە جگە لە ئەڵڵا پەروەردگاری عەرشی مەزن، هیچ پەرستراوێک نییە جگە لە ئەڵڵا پەروەردگاری ئاسمانەکان و زەوی و عەرشی پڕ شکۆ)`
+      },
+      {
+        ar: `(اللهم إني أعوذ بك من الهم والحزن، والعجز والكسل، والبخل والجبن، وضَلع الدين، وغلبة الرجال)`,
+        ku: `(خودایە، پەنا دەگرم بە تۆ لە خەم و خەفەت و بێدەسەڵاتی و تەمبەڵیی و ڕەزیلی و ترسنۆکی و قورسایی قەرز و زاڵبوونی پیاوان)`
+      },
+      {
+        ar: `(الله؛ الله ربي، لا أشرك به شيئاً)`,
+        ku: `(ئەڵڵا؛ تەنها ئەڵڵا پەروەردگاری منە و هیچ شتێکی ناکەم بە هاوبەش)`
+      },
+      {
+        ar: `اللهم إني أعوذ بك من جَهْدِ البلاءِ ودركِ الشقاءِ وسوءِ القضاءِ وشماتةِ الأعداءِ.`,
+        ku: `خودایە، پەنا دەگرم بە تۆ لە توندی بەڵا و گەیشتن بە بەدبەختی و خراپەی بڕیار و قەدەر و خۆشیویستنی دوژمنان بە ناخۆشییەکانم.`
+      },
+      {
+        ar: `(اللهم إني أعوذ بك من الهدم، وأعوذ بك من التردي، وأعوذ بك من الغرق والحريق، وأعوذ بك أن يتخبطني الشيطان عند الموت، وأعوذ بك أن أموت في سبيلك مدبراً وأعوذ بك أن أموت لديغاً)`,
+        ku: `(خودایە، پەنا دەگرم بە تۆ لە ڕووخان و کەوتنەخوارەوە و خنکان و سووتان، و لەوەی شەیتان لە کاتی مردندا سەر لێم بشێوێنێت، و لەوەی لە پێناوی تۆدا بە ڕاکردن بمرم، و لەوەی بە پێوەدان بمرم)`
+      },
+      {
+        ar: `(يا فارج الهمّ، اجعل لي من أمري فرجاً ومخرجاً، يا سامع كل شكوى، وكاشف كل كرب، أدعوك يا إلهي دعاء من اشتدّت فاقته، وضعفت قوّته، وقلّت حيلته، دعاء الملهوف المكروب الذي لا يجد كشف ما نزل به غيرك)`,
+        ku: `(ئەی ڕەوێنەرەوەی خەم، بۆ کارەکانم دەرچەیەک بکەرەوە، ئەی بیسەری هەموو شکاتێک و لابەری هەموو تەنگانەیەک، داوات لێ دەکەم بە پاڕانەوەی ئەو کەسەی ناخۆشییەکەی توند بووە و هێزی لاواز بووە و بێ چارە بووە، پاڕانەوەی دڵپڕێک کە دەزانێت جگە لە تۆ کەس خەمەکەی لای نادات)`
+      },
+      {
+        ar: `أدعوك يا إلهي دعاء من اشتدت فاقته، وضعفت قوته، وقلت حيلته، دعاء الملهوف المكروب الذي لا يجد كشف ما نزل به إلا منك، فرّج عني ما أهمني، وتولّى أمري بلطفك، وتداركني برحمتك وكرمك، إنك على كل شيء قدير. اللهم ذلّل لي صعوبة أمري، وسهّل لي مشقته، وارزقني الخير كله أكثر مما أطلب، واصرف عني كل شر، ربّ اشرح لي صدري، ويسّر لي أمري يا كريم.`,
+        ku: `پەروەردگارم، پاڕانەوەی ئەو کەسەت لێ دەکەم کە ناخۆشییەکەی توند بووە و بێ چارە بووە، و دەزانێت تەنها تۆ خەمەکەی لای دەدەیت. دەی خەمەکانم بڕەوێنەوە و بە لوتفی خۆت سەرپەرشتی کارەکانم بکە و بە ڕەحمەت و کەرەمت فریام بکەوە، تۆ بەسەر هەموو شتێکدا بەتوانایت. خودایە، قورسی کارەکانم بۆ ئاسان بکە و ناڕەحەتییەکانم بۆ سووک بکە و خێرم پێ ببەخشە زیاتر لەوەی داوای دەکەم و هەموو شەڕێکم لێ دوور بخەرەوە. پەروەردگارم، سینەم فراوان بکە و کارەکانم بۆ ئاسان بکە ئەی میهرەبان.`
+      }
+    ]
+  },
+
+  /* ===== 6 ===== */
+  {
+    id: 6,
+    name: "بۆ ڕۆزی",
+    long: "دوعا بۆ ڕۆزی",
+    desc: "داوای ڕۆزی پاک و فراوان",
+    duas: [
+      {
+        ar: `اللهم ارزقني رزقاً واسعاً حلالاً طيباً من غير كدٍّ، واستجب دعائي من غير ردٍّ، وأعوذ بك من الفضيحتين: الفقر والدَّيْن، اللهم يا رازق السائلين، يا راحم المساكين، ويا ذا القوة المتين، ويا خير الناصرين، يا ولي المؤمنين، يا غياث المستغيثين، إياك نعبد وإياك نستعين، اللهم إن كان رزقي في السماء فأنزله، وإن كان في الأرض فأخرجه، وإن كان بعيداً فقرّبه، وإن كان قريباً فيسّره، وإن كان كثيراً فبارك فيه يا أرحم الراحمين، اللهم صلِّ على محمد وآل محمد، واكفني بحلالك عن حرامك، وبطاعتك عن معصيتك، وبفضلك عمن سواك يا إله العالمين، وصلى الله على محمد وآله وصحبه أجمعين.`,
+        ku: `خودایە، ڕۆزییەکی فراوان و حەڵاڵ و پاکم پێ ببەخشە بێ ماندووبوونی زۆر، و دوعاکانم قبوڵ بکە بێ ڕەتکردنەوە. پەنا دەگرم بە تۆ لە هەژاری و قەرزاری. خودایە، ئەی ڕۆزیدەری داواکاران و میهرەبان بەرامبەر هەژاران و خاوەن هێزی پتەو و باشترین سەرخەر و دۆستی ئیمانداران و هاوارڕەسی لێقەوماوان، تەنها تۆ دەپەرستین و تەنها لە تۆ یارمەتی دەخوازین. خودایە، ئەگەر ڕۆزیم لە ئاسمانە دایببارێنە، ئەگەر لە زەویە دەریبهێنە، ئەگەر دوورە نزیکی بکەرەوە، ئەگەر نزیکە ئاسانی بکە، و ئەگەر زۆرە بەرەکەتی تێ بخە ئەی میهرەبانترین میهرەبانان. خودایە سڵاو بنێرە بۆ محمد و ئالی محمد، و بە حەڵاڵی خۆت بێ نیازم بکە لە حەرامت و بە گوێڕایەڵی خۆت دوورم بخەرەوە لە سەرپێچیت و بە فەزڵی خۆت بێ نیازم بکە لە هەرچی جگە لە تۆیە ئەی پەروەردگاری جیهانیان.`
+      },
+      {
+        ar: `اللهم سخّر لي رزقي، واعصمني من الحرص والتعب في طلبه، ومن شغل الهمّ، ومن الذل للخلق، اللهم يسّر لي رزقاً حلالاً، وعجّل لي به، يا نعم المجيب. اللهم يا باسط اليدين بالعطايا، سبحان من قسم الأرزاق ولم ينسَ أحداً، اجعل يدي عُليا بالإعطاء، إنك على كل شيء قدير. اللهم ارزقني رزقاً لا تجعل لأحدٍ فيه منّة عليّ، ولا في الآخرة عليه تبعة، برحمتك يا أرحم الراحمين.`,
+        ku: `خودایە، ڕۆزییەکەم بۆ ئاسان بکە و بمهێڵەرەوە لە چاوچنۆکی و ماندووبوونی زۆر لە تەڵەبکردنیدا و لە دڵەڕاوکێ و لە ڕیسوایی بەرامبەر خەڵک. خودایە، ڕۆزییەکی حەڵاڵم بۆ ئاسان بکە و بۆم خێرا بکە ئەی باشترین وەڵامدەرەوە. خودایە، ئەی خاوەن بەخشین، پاکی بۆ ئەو خودایەی ڕۆزییەکانی دابەش کردووە و کەسی فەرامۆش نەکردووە، دەستم بکە بە دەستێکی بەخشندە، تۆ بەسەر هەموو شتێکدا بەتوانایت. خودایە، ڕۆزییەکم پێ ببەخشە کە کەس منەتی بەسەرمەوە نەبێت و لە قیامەتیشدا لێپرسینەوەی نەبێت، بە ڕەحمەتی خۆت ئەی میهرەبانترین میهرەبانان.`
+      }
+    ]
+  },
+
+  /* ===== 7 ===== */
+  {
+    id: 7,
+    name: "بۆ گشت موسڵمانان",
+    long: "دوعا بۆ گشت موسڵمانان",
+    desc: "ڕەحمەت بۆ ئوممەت",
+    duas: [
+      {
+        ar: `اللهم اغفر للمسلمين والمسلمات، والمؤمنين والمؤمنات، الأحياء منهم والأموات. اللهم أصلح شباب المسلمين، اللهم اجعلهم قرة عين لمجتمعاتهم، وأسرهم، وآبائهم، وأمهاتهم، اللهم حبّب إليهم الإيمان، وزيّنه في قلوبهم، وكرّه إليهم الكفر، والفسوق، والعصيان، واجعلهم من الراشدين يا أرحم الراحمين.`,
+        ku: `خودایە، خۆش ببە لە پیاوان و ژنانی موسڵمان و ئیماندار، چ زیندوو بن یان مردوو. خودایە گەنجانی موسڵمان چاک بکە و بیانوێرە بە شادی بۆ کۆمەڵگە و خێزان و دایک و باوکیان. خودایە ئیمانیان لە لای خۆشەویست بکە و لە دڵیاندا بیڕازێنەرەوە و بێزارییان بدە لە بێدینی و خراپەکاری و بیانوێرە بە کەسانی ژیر ئەی میهرەبانترین میهرەبانان.`
+      },
+      {
+        ar: `اللهم احفظ مجتمعات المسلمين من كل الآفات، وعُمّها بالخيرات والبركات، وطهّرها من المعاصي والمنكرات، ادفع عنا الغلاء والوباء والرياء والزنا يا رب العالمين، اجعل خير أعمالنا خواتمها، وخير أيامنا يوم نلقاك، واجعلنا أغنى خلقك بك، وأفقر عبادك إليك، هب لنا غنى لا يطغينا، وصحة لا تلهينا، واغننا بفضلك عمّن أغنيته عنا.`,
+        ku: `خودایە، کۆمەڵگەکانی موسڵمان بپارێزە لە بەڵاکان و خێر و بەرەکەتیان بەسەردا ببارێنە و لە گوناهەکان پاکیان بکەرەوە. گرانی و نەخۆشی و ڕیایی و زینامان لێ دوور بخەرەوە. باشترین کردەوەمان بکە بە کۆتا کردەوە و باشترین ڕۆژمان بکە بە ڕۆژی گەیشتن بە تۆ. بمانگێڕە بە دەوڵەمەندترین کەس بە هۆی تۆوە و هەژارترین بەندە بەرامبەر تۆ. دەوڵەمەندییەکی وەهامان پێ ببەخشە سەرکەشیمان پێ نەکات و تەندروستییەک کە سەرقاڵمان نەکات و بە فەزڵی خۆت بێ نیازم بکە لە هەرکەس کە بێ نیازی کردووە لە ئێمە.`
+      },
+      {
+        ar: `اللهم اغفر لجميع موتى المسلمين الذين شهدوا لك بالوحدانية، ولنبيك بالرسالة، وماتوا على ذلك، اللهم اغفر لهم، وعافهم، واعفُ عنهم، وأكرم نُزُلهم، ووسّع مُدخلهم، اللهم اجعل قبورهم روضة من رياض الجنة، ولا تجعلها حفرة من حُفر النار، اللهم ارحم وحشتهم في القبور، وآمنهم يوم البعث والنشور، وجازهم بالإحسان إحساناً، وبالسيئات غفراناً، وأنزل على قبورهم الضياء والنور، والفسحة والسرور، وانقلهم من ضيق اللحود إلى جناتك جنات الخلود.`,
+        ku: `خودایە، خۆش ببە لە هەموو مردووەکانی موسڵمانان کە شایەتییان داوە تۆ یەکیت و پێغەمبەرەکەت نێردراوە و لەسەر ئەوە مردوون. خودایە لێیان خۆش ببە و بیانوێرە بە پارێزراوی و جێگایان ڕێزدار بکە و گۆڕەکانیان فراوان بکە. گۆڕەکانیان بکە بە باخچەی بەهەشت و مەیگێڕە بە چاڵی دۆزەخ. ڕەحم بە تەنیاییان بکە و لە ڕۆژی زیندووبوونەوەدا ئارامییان پێ ببەخشە. پاداشتی چاکەکانیان بە چاکە بدەرەوە و لە خراپەکانیان خۆش ببە. نوور و شادی بڕێژە بەسەر گۆڕەکانیاندا و لە تەنگی ناو گۆڕەوە بیانگوازەرەوە بۆ ناو بەهەشتە هەمیشەییەکانت.`
+      }
+    ]
+  },
+
+  /* ===== 8 ===== */
+  {
+    id: 8,
+    name: "کارتەکانی دیاری",
+    long: "کارتەکانی دیاری · الإهداء",
+    desc: "دیاری بۆ خۆشەویستان",
+    isGift: true,
+    duas: [
+      {
+        ar: `اللهم اجعله من أعظم خلقك نصيباً في كل خير تقسمه، وفي كل نور تنشره، وفي كل رزق تبسطه، وفي كل ضُرٍّ تكشفه، وفي كل بلاء ترفعه.`,
+        ku: `"خودایە، (باوکم/دایکم/برام/خوشکم) بگێڕە لەو بەندە گەورانەی کە گەورەترین پشکیان هەیە لە هەر خێرێک کە ئەمڕۆ دابەشی دەکەیت، و لە هەر ڕووناکییەک کە بڵاوی دەکەیتەوە، و لە هەر ڕۆزییەک کە دەیبەخشیت، و لە هەر ناخۆشییەک کە لایدەبەیت، و لە هەر بەڵایەک کە بەرزی دەکەیتەوە و نایهێڵیت."`
+      }
+    ]
+  }
+];
+
+/* ======================================================
+   STATE
+====================================================== */
+const state = {
+  view: 'home',
+  section: null,
+  size: parseInt(localStorage.getItem('arafah-size') || '2', 10)
+};
+
+/* ======================================================
+   DOM
+====================================================== */
+const $ = (s) => document.querySelector(s);
+const grid = $('#sections-grid');
+const viewHome = $('#view-home');
+const viewSection = $('#view-section');
+const sectionTitle = $('#section-title');
+const sectionLabel = $('#section-label');
+const duasContainer = $('#duas-container');
+const fab = $('#fab');
+const sheet = $('#sheet');
+const backdrop = $('#backdrop');
+const sheetClose = $('#sheet-close');
+const sizesWrap = $('#sizes');
+const btnBack = $('#btn-back');
+
+/* ======================================================
+   RENDER — home grid
+====================================================== */
+function renderHome(){
+  grid.innerHTML = SECTIONS.map(s => `
+    <button class="card" data-id="${s.id}" type="button">
+      <div class="num">٠${s.id}</div>
+      <h3>${s.name}</h3>
+      <p>${s.desc}</p>
+    </button>
+  `).join('');
+
+  grid.querySelectorAll('.card').forEach(c => {
+    c.addEventListener('click', () => openSection(parseInt(c.dataset.id, 10)));
+  });
+}
+
+/* ======================================================
+   RENDER — section view
+====================================================== */
+function openSection(id){
+  const s = SECTIONS.find(x => x.id === id);
+  if (!s) return;
+
+  state.view = 'section';
+  state.section = id;
+
+  sectionLabel.textContent = `بەشی ٠${id}`;
+  sectionTitle.textContent = s.long;
+
+  duasContainer.innerHTML = s.duas.map((d, i) => {
+    if (s.isGift) {
+      return `
+        <article class="dua gift">
+          <span class="corner tl"></span>
+          <span class="corner tr"></span>
+          <span class="corner bl"></span>
+          <span class="corner br"></span>
+          <div class="crest">❖ ✦ ❖</div>
+          <p class="ar" dir="rtl">${d.ar}</p>
+          <div class="divider"><span class="l"></span><span class="d">◆</span><span class="l"></span></div>
+          <span class="label">مانا</span>
+          <p class="ku" dir="rtl">${d.ku}</p>
+        </article>
+      `;
+    }
+    return `
+      <article class="dua">
+        <p class="ar" dir="rtl">${d.ar}</p>
+        <div class="divider"><span class="l"></span><span class="d">◆</span><span class="l"></span></div>
+        <span class="label">مانا</span>
+        <p class="ku" dir="rtl">${d.ku}</p>
+      </article>
+    `;
+  }).join('');
+
+  viewHome.style.display = 'none';
+  viewSection.classList.add('show');
+  window.scrollTo({ top: 0, behavior: 'instant' });
+
+  // push state so back button works
+  history.pushState({ view: 'section', id }, '', `#section-${id}`);
+}
+
+function goHome(){
+  state.view = 'home';
+  state.section = null;
+  viewSection.classList.remove('show');
+  viewHome.style.display = 'block';
+  window.scrollTo({ top: 0, behavior: 'instant' });
+}
+
+btnBack.addEventListener('click', () => {
+  history.back();
+});
+
+window.addEventListener('popstate', (e) => {
+  if (!e.state || e.state.view === 'home') {
+    goHome();
+  } else if (e.state.view === 'section') {
+    openSection(e.state.id);
+  }
+});
+
+/* ======================================================
+   FONT SIZE
+====================================================== */
+const SCALE_MAP = { 1: 0.88, 2: 1, 3: 1.18, 4: 1.36 };
+
+function applySize(n){
+  state.size = n;
+  document.documentElement.style.setProperty('--scale', SCALE_MAP[n]);
+  localStorage.setItem('arafah-size', String(n));
+  sizesWrap.querySelectorAll('button').forEach(b => {
+    b.classList.toggle('active', parseInt(b.dataset.size, 10) === n);
+  });
+}
+
+sizesWrap.querySelectorAll('button').forEach(b => {
+  b.addEventListener('click', () => applySize(parseInt(b.dataset.size, 10)));
+});
+
+/* ======================================================
+   SETTINGS SHEET
+====================================================== */
+function openSheet(){
+  sheet.classList.add('show');
+  backdrop.classList.add('show');
+}
+function closeSheet(){
+  sheet.classList.remove('show');
+  backdrop.classList.remove('show');
+}
+
+fab.addEventListener('click', openSheet);
+backdrop.addEventListener('click', closeSheet);
+sheetClose.addEventListener('click', closeSheet);
+
+/* ======================================================
+   INIT
+====================================================== */
+renderHome();
+applySize(state.size);
+
+// service worker
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+  });
+}
+</script>
+
+</body>
+</html>
