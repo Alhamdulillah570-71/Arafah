@@ -1,5 +1,5 @@
 /* Service Worker — دوعای ڕۆژی عەرەفە */
-const VERSION = 'arafah-v1.0.0';
+const VERSION = 'arafah-v1.0.1';
 
 const CORE = [
   './',
